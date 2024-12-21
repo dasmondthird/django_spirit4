@@ -1,3 +1,10 @@
+"""
+Этот файл содержит конфигурации админки для приложения блога.
+Требования:
+- Добавить комментарий в заголовке, объясняющий требования и изменения, внесенные после автотестов второго модуля.
+- Добавить док-строки к функциям, чтобы расширить заголовочный комментарий.
+"""
+
 from django.contrib import admin
 
 from .models import Category, Location, Post, Comment
@@ -41,6 +48,7 @@ class PostAdmin(admin.ModelAdmin):
 
     @admin.display(description='Комментариев')
     def comment_count(self, post):
+        """Возвращает количество комментариев для публикации."""
         return post.comments.count()
 
 

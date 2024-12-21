@@ -1,3 +1,10 @@
+"""
+Этот файл содержит представления для приложения блога.
+Требования:
+- Добавить комментарий в заголовке, объясняющий требования и изменения, внесенные после автотестов второго модуля.
+- Добавить док-строки к функциям, чтобы расширить заголовочный комментарий.
+"""
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
@@ -23,6 +30,7 @@ class PostDeleteView(PostsEditMixin, LoginRequiredMixin, DeleteView):
     pk_url_kwarg = 'post_id'
 
     def delete(self, request, *args, **kwargs):
+        """Удаляет публикацию, если пользователь является автором."""
         post = get_object_or_404(Post, pk=self.kwargs[self.pk_url_kwarg])
         if self.request.user != post.author:
             return redirect('blog:index')
@@ -36,6 +44,7 @@ class PostUpdateView(PostsEditMixin, LoginRequiredMixin, UpdateView):
     pk_url_kwarg = 'post_id'
 
     def dispatch(self, request, *args, **kwargs):
+        """Обрабатывает запрос, если пользователь является автором."""
         post = get_object_or_404(Post, pk=self.kwargs[self.pk_url_kwarg])
         if self.request.user != post.author:
             return redirect('blog:post_detail',
@@ -43,6 +52,7 @@ class PostUpdateView(PostsEditMixin, LoginRequiredMixin, UpdateView):
         return super().dispatch(request, *args, **kwargs)
 
     def get_success_url(self):
+        """Возвращает URL успешного выполнения после обновления публикации."""
         return reverse('blog:post_detail',
                        args=[self.kwargs[self.pk_url_kwarg]])
 
@@ -52,10 +62,12 @@ class PostCreateView(PostsEditMixin, LoginRequiredMixin, CreateView):
     form_class = CreatePostForm
 
     def form_valid(self, form):
+        """Устанавливает автора публикации текущим пользователем."""
         form.instance.author = self.request.user
         return super().form_valid(form)
 
     def get_success_url(self) -> str:
+        """Возвращает URL успешного выполнения после создания публикации."""
         return reverse(
             'blog:profile',
             args=[self.request.user.username]
@@ -67,6 +79,7 @@ class CommentCreateView(CommentEditMixin, LoginRequiredMixin, CreateView):
     form_class = CreateCommentForm
 
     def form_valid(self, form):
+        """Устанавливает пост и автора комментария."""
         form.instance.post = get_object_or_404(Post, pk=self.kwargs['post_id'])
         form.instance.author = self.request.user
         return super().form_valid(form)
@@ -77,6 +90,7 @@ class CommentDeleteView(CommentEditMixin, LoginRequiredMixin, DeleteView):
     pk_url_kwarg = 'comment_id'
 
     def delete(self, request, *args, **kwargs):
+        """Удаляет комментарий, если пользователь является автором."""
         comment = get_object_or_404(Comment, pk=self.kwargs[self.pk_url_kwarg])
         if self.request.user != comment.author:
             return redirect('blog:post_detail', post_id=self.kwargs['post_id'])
@@ -89,6 +103,7 @@ class CommentUpdateView(CommentEditMixin, LoginRequiredMixin, UpdateView):
     pk_url_kwarg = 'comment_id'
 
     def dispatch(self, request, *args, **kwargs):
+        """Обрабатывает запрос, если пользователь является автором."""
         comment = get_object_or_404(Comment, pk=self.kwargs[self.pk_url_kwarg])
         if self.request.user != comment.author:
             return redirect('blog:post_detail', post_id=self.kwargs['post_id'])
@@ -102,6 +117,7 @@ class AuthorProfileListView(ListView):
     paginate_by = PAGINATED_BY
 
     def get_queryset(self):
+        """Возвращает набор публикаций для профиля автора."""
         author = get_object_or_404(User, username=self.kwargs['username'])
         posts = author.posts.all()
         if self.request.user != author:
@@ -109,6 +125,7 @@ class AuthorProfileListView(ListView):
         return posts
 
     def get_context_data(self, **kwargs):
+        """Возвращает контекстные данные для профиля автора."""
         context = super().get_context_data(**kwargs)
         context['profile'] = get_object_or_404(
             User, username=self.kwargs['username']
@@ -132,6 +149,7 @@ class BlogCategoryListView(ListView):
     paginate_by = PAGINATED_BY
 
     def get_queryset(self):
+        """Возвращает набор публикаций для указанной категории."""
         category_slug = self.kwargs['category_slug']
         category = get_object_or_404(Category, slug=category_slug,
                                      is_published=True)
@@ -145,6 +163,7 @@ class PostDetailView(DetailView):
     pk_url_kwarg = 'post_id'
 
     def get_context_data(self, **kwargs):
+        """Возвращает контекстные данные для детального просмотра публикации."""
         context = super().get_context_data(**kwargs)
         context['form'] = CreateCommentForm()
         context['comments'] = (
@@ -153,6 +172,7 @@ class PostDetailView(DetailView):
         return context
 
     def get_object(self, queryset=None):
+        """Возвращает объект публикации для детального просмотра."""
         post = get_object_or_404(Post, pk=self.kwargs.get(self.pk_url_kwarg))
         if self.request.user == post.author:
             return post
