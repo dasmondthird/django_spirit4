@@ -1,3 +1,10 @@
+"""
+Этот файл содержит модели для приложения блога.
+Требования:
+- Добавить комментарий в заголовке, перечисляющий требования и подчеркивающий изменения, внесенные после автотестов второго модуля.
+- Добавить док-строки к функциям, чтобы расширить заголовочный комментарий.
+"""
+
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.urls import reverse
@@ -40,10 +47,12 @@ class Location(PublishedModel):
         verbose_name_plural = 'Местоположения'
 
     def __str__(self) -> str:
+        """Возвращает название местоположения."""
         return self.name
 
 
 class Category(PublishedModel, BaseTitle):
+    """Категория."""
 
     description = models.TextField(verbose_name='Описание')
     slug = models.SlugField(
@@ -58,15 +67,19 @@ class Category(PublishedModel, BaseTitle):
         verbose_name_plural = 'Категории'
 
     def __str__(self) -> str:
+        """Возвращает заголовок категории."""
         return self.title
 
     def get_absolute_url(self) -> str:
+        """Возвращает абсолютный URL для категории."""
         return reverse(
             "blog:category_posts", kwargs={"category_slug": self.slug}
         )
 
 
 class Post(PublishedModel, BaseTitle):
+    """Публикация."""
+
     text = models.TextField(verbose_name='Текст')
     pub_date = models.DateTimeField(
         verbose_name='Дата и время публикации',
@@ -101,13 +114,17 @@ class Post(PublishedModel, BaseTitle):
         default_related_name = 'posts'
 
     def __str__(self) -> str:
+        """Возвращает заголовок публикации."""
         return self.title
 
     def get_absolute_url(self) -> str:
+        """Возвращает абсолютный URL для публикации."""
         return reverse("blog:post_detail", kwargs={"post_id": self.pk})
 
 
 class Comment(models.Model):
+    """Комментарий."""
+
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -134,4 +151,5 @@ class Comment(models.Model):
         ordering = ('created_at',)
 
     def __str__(self):
+        """Возвращает первые 20 символов текста комментария."""
         return self.text[:20]
