@@ -48,7 +48,9 @@ class PostAdmin(admin.ModelAdmin):
 
     @admin.display(description='Комментариев')
     def comment_count(self, post):
-        """Возвращает количество комментариев для публикации."""
+        """
+        Возвращает количество комментариев для публикации.
+        """
         return post.comments.count()
 
 

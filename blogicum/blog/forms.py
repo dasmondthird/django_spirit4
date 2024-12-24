@@ -12,6 +12,10 @@ from .models import Comment, Post
 
 
 class CreatePostForm(forms.ModelForm):
+    """
+    Форма для создания публикации.
+    """
+
     pub_date = forms.DateTimeField(
         initial=timezone.now,
         required=True,
@@ -41,6 +45,10 @@ class CreatePostForm(forms.ModelForm):
 
 
 class CreateCommentForm(forms.ModelForm):
+    """
+    Форма для создания комментария.
+    """
+
     class Meta:
         model = Comment
         fields = ("text",)
