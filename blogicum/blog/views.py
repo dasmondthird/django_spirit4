@@ -25,6 +25,10 @@ PAGINATED_BY = 10
 
 
 class PostDeleteView(PostsEditMixin, LoginRequiredMixin, DeleteView):
+    """
+    Представление для удаления публикации.
+    Удаляет публикацию, если пользователь является автором.
+    """
     model = Post
     success_url = reverse_lazy('blog:index')
     pk_url_kwarg = 'post_id'
@@ -39,6 +43,10 @@ class PostDeleteView(PostsEditMixin, LoginRequiredMixin, DeleteView):
 
 
 class PostUpdateView(PostsEditMixin, LoginRequiredMixin, UpdateView):
+    """
+    Представление для обновления публикации.
+    Обрабатывает запрос, если пользователь является автором.
+    """
     form_class = CreatePostForm
     model = Post
     pk_url_kwarg = 'post_id'
@@ -58,6 +66,10 @@ class PostUpdateView(PostsEditMixin, LoginRequiredMixin, UpdateView):
 
 
 class PostCreateView(PostsEditMixin, LoginRequiredMixin, CreateView):
+    """
+    Представление для создания новой публикации.
+    Устанавливает автора публикации текущим пользователем.
+    """
     model = Post
     form_class = CreatePostForm
 
@@ -75,6 +87,10 @@ class PostCreateView(PostsEditMixin, LoginRequiredMixin, CreateView):
 
 
 class CommentCreateView(CommentEditMixin, LoginRequiredMixin, CreateView):
+    """
+    Представление для создания нового комментария.
+    Устанавливает пост и автора комментария.
+    """
     model = Comment
     form_class = CreateCommentForm
 
@@ -86,6 +102,10 @@ class CommentCreateView(CommentEditMixin, LoginRequiredMixin, CreateView):
 
 
 class CommentDeleteView(CommentEditMixin, LoginRequiredMixin, DeleteView):
+    """
+    Представление для удаления комментария.
+    Удаляет комментарий, если пользователь является автором.
+    """
     model = Comment
     pk_url_kwarg = 'comment_id'
 
@@ -98,6 +118,10 @@ class CommentDeleteView(CommentEditMixin, LoginRequiredMixin, DeleteView):
 
 
 class CommentUpdateView(CommentEditMixin, LoginRequiredMixin, UpdateView):
+    """
+    Представление для обновления комментария.
+    Обрабатывает запрос, если пользователь является автором.
+    """
     model = Comment
     form_class = CreateCommentForm
     pk_url_kwarg = 'comment_id'
@@ -112,6 +136,10 @@ class CommentUpdateView(CommentEditMixin, LoginRequiredMixin, UpdateView):
 
 
 class AuthorProfileListView(ListView):
+    """
+    Представление для отображения профиля автора.
+    Возвращает набор публикаций для профиля автора.
+    """
     model = Post
     template_name = 'blog/profile.html'
     paginate_by = PAGINATED_BY
@@ -134,6 +162,10 @@ class AuthorProfileListView(ListView):
 
 
 class BlogIndexListView(ListView):
+    """
+    Представление для отображения главной страницы блога.
+    Возвращает набор опубликованных публикаций.
+    """
     model = Post
     template_name = 'blog/index.html'
     context_object_name = 'post_list'
@@ -143,6 +175,10 @@ class BlogIndexListView(ListView):
 
 
 class BlogCategoryListView(ListView):
+    """
+    Представление для отображения публикаций по категориям.
+    Возвращает набор публикаций для указанной категории.
+    """
     model = Post
     template_name = 'blog/category.html'
     context_object_name = 'post_list'
@@ -158,6 +194,10 @@ class BlogCategoryListView(ListView):
 
 
 class PostDetailView(DetailView):
+    """
+    Представление для детального просмотра публикации.
+    Возвращает объект публикации для детального просмотра.
+    """
     model = Post
     template_name = 'blog/detail.html'
     pk_url_kwarg = 'post_id'
