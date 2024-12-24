@@ -3,6 +3,13 @@
 Требования:
 - Добавить комментарий в заголовке, объясняющий требования и изменения, внесенные после автотестов второго модуля.
 - Добавить док-строки к функциям, чтобы расширить заголовочный комментарий.
+
+Добавлено после второго модуля:
+- Кастомные страницы ошибок (403, 404, 500)
+- Работа с пользователями (регистрация, редактирование, удаление)
+- Пагинация, прикрепление изображений, комментарии к публикациям
+- Удаление публикаций и комментариев
+- Новые статичные страницы и отправка почты (файловый бэкенд)
 """
 
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -30,7 +37,10 @@ class PostDeleteView(PostsEditMixin, LoginRequiredMixin, DeleteView):
     pk_url_kwarg = 'post_id'
 
     def delete(self, request, *args, **kwargs):
-        """Удаляет публикацию, если пользователь является автором."""
+        """
+        Удаляет публикацию, если пользователь является автором.
+        Обновлено после второго модуля для поддержки новых требований.
+        """
         post = get_object_or_404(Post, pk=self.kwargs[self.pk_url_kwarg])
         if self.request.user != post.author:
             return redirect('blog:index')
@@ -79,7 +89,10 @@ class CommentCreateView(CommentEditMixin, LoginRequiredMixin, CreateView):
     form_class = CreateCommentForm
 
     def form_valid(self, form):
-        """Устанавливает пост и автора комментария."""
+        """
+        Устанавливает пост и автора комментария.
+        Обновлено после второго модуля для поддержки новых требований.
+        """
         form.instance.post = get_object_or_404(Post, pk=self.kwargs['post_id'])
         form.instance.author = self.request.user
         return super().form_valid(form)
